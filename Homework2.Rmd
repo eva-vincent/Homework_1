@@ -80,3 +80,6 @@ The correlation coefficient is `r round(cor(leprosy$GDP_billions,leprosy$per.hun
 When comparing the prevalence of disease across various countries, it is important to ensure that we are making comparisons within the context of the population size. To do this, I looked at the number of leprosy cases per 100,000 people and found that most countries tend to have less than 1 leprosy case per 100,000 people. I then looked at the number of leprosy cases per 100,000 people by region and found that Africa had the highest median number of cases, but Asia and the Pacific had the largest spread of median cases. Europe has the lowest prevalence of leprosy cases with a median of 0.00 despite having the highest number of countries. Finally, I observed the relationship between GDP in billions and leprosy cases per 100,000 people. The results indicated that there was an extremely weak relationship between these variables with a correlation coefficient of -0.02.
 
 To learn more about this disease, visit the [International Leprosy Association](https://www.internationalleprosyassociation.org/) website.
+
+
+YIPPEEEEE
