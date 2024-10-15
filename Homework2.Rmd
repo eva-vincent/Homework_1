@@ -1,0 +1,82 @@
+---
+title: "Leprosy in 2022"
+author: "Eva Vincent - SDS 313 UT Austin"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: hide
+date: "2024-09-17"
+---
+
+This report will investigate the prevalence of leprosy in 183 countries from various regions of the world. To do this, I will compare the number of new leprosy cases in 2022, population, GDP, land area, and region of the countries.
+
+## Highest Number of Cases
+
+```{r}
+leprosy <- read.csv('Homework2_leprosy.csv')
+leprosy[which.max(leprosy$New_Cases),]
+```
+
+The table above shows the observations of the country with the highest number of leprosy cases, India.
+
+Although India has the highest number of leprosy cases at 103,819, it also has an extremely large population. It is not a fair comparison to solely look at the raw number of cases when comparing the prevalence of leprosy across countries as different countries will have different population sizes. A smaller country could have a lower number of cases but have the same ratio of leprosy cases to poulation as India. The number of leprosy cases across countries should be compared in relation to their total population.
+
+## Leprosy Cases per 100,000 People
+
+```{r}
+leprosy$per.hundredk  <- (leprosy$New_Cases/leprosy$Population)*100000
+
+library(ggplot2)
+leprosy_ggplot <- ggplot(leprosy)
+leprosy_ggplot + geom_histogram(aes(x=per.hundredk), binwidth=3,col='black',fill='dark green') + labs(title='Leprosy Cases per 100k People',x='Leprosy Cases per 100k', y= 'Frequency') + scale_fill_brewer(type='qual',palette=2)
+```
+
+The graph shows the distribution of the leprosy cases per 100k people by country. The y-axis shows the frequency of countries, and the x-axis shows the number of leprosy cases per 100k people.
+
+The graph is positively skewed, so we can use the median and interquartile range to describe its distribution. The median number of leprosy cases per 100,000 people is `r round(median(leprosy$per.hundredk, na.rm=TRUE),2)` and the interquartile range is `r round(IQR(leprosy$per.hundredk, na.rm=TRUE),2)`.
+
+## Leprosy Cases Across Regions
+
+```{r}
+ggplot(leprosy, aes(x = Region, y = per.hundredk, fill = Region)) + geom_boxplot() + coord_flip() +ylim(c(0,10)) + labs(title='Leprosy Cases per 100k People by Region',x='Region', y= 'Leprosy Cases per 100k')
+```
+
+The box plot graph shows the comparison of leprosy cases per 100k people by region.
+
+
+
+```{r echo=FALSE}
+#Create data frame of table:
+median_pr <- aggregate(per.hundredk~Region, data=leprosy, median)
+mytable <- data.frame(median_pr$Region,median_pr$per.hundredk)
+mytable$total_countries <- table(leprosy$Region)
+
+#Rename columns and round values:
+colnames(mytable) <- c('Region','Median', 'Number of Countries')
+mytable$Median <- round(mytable$Median,2)
+
+#Output table:
+library(kableExtra)
+kable_classic(kbl(mytable,caption = "Leprosy Cases by Country"),full_width = FALSE)
+```
+
+The table provides the region, median number of leprosy cases per 100,000 by region, and  number of countries per region.
+
+
+The country with the highest median number of leprosy cases is Africa at 0.91 cases per 100,000 people. However, Asia and Pacific area has a high IQR indicating that the data is less consistent. This region has relatively more countries with leprosy cases per 100k people farther from the median, revealing a somewhat high prevalence of leprosy. Although Europe has a few outliers, this region has the lowest median and the most countries and can therefore be assumed to have the lowest prevalence of leprosy.
+
+## Leprosy Cases and GDP
+
+```{r}
+leprosy_ggplot + geom_point(aes(x=per.hundredk,y=GDP_billions)) + theme_classic() + labs(title='Leprosy Cases and GDP', x='Leprosy Cases per 100k',y='GDP (in billions') + scale_fill_brewer(type='qual',palette=2)
+```
+
+The scatter plot shows the relationship between GDP in billions and leprosy cases per 100k people of each country.
+
+The correlation coefficient is `r round(cor(leprosy$GDP_billions,leprosy$per.hundredk, use = "complete.obs"),2)`, indicating an extremely weak, negative relationship. It is likely that there is no relationship between GPD and leprosy cases.
+
+## Conclusion
+When comparing the prevalence of disease across various countries, it is important to ensure that we are making comparisons within the context of the population size. To do this, I looked at the number of leprosy cases per 100,000 people and found that most countries tend to have less than 1 leprosy case per 100,000 people. I then looked at the number of leprosy cases per 100,000 people by region and found that Africa had the highest median number of cases, but Asia and the Pacific had the largest spread of median cases. Europe has the lowest prevalence of leprosy cases with a median of 0.00 despite having the highest number of countries. Finally, I observed the relationship between GDP in billions and leprosy cases per 100,000 people. The results indicated that there was an extremely weak relationship between these variables with a correlation coefficient of -0.02.
+
+To learn more about this disease, visit the [International Leprosy Association](https://www.internationalleprosyassociation.org/) website.
